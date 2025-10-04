@@ -120,7 +120,7 @@ def mallow_cp_for_dataset(x, y, N_grid):
     return np.array(cp_vals), N_max
 
 def plot_scatter_plots():
-    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+    fig, axes = plt.subplots(1, 2, figsize=(9, 3))
     sample_x = generate_beta_sample(alpha, beta, n)
     sample_no_noise = generate_response(sample_x, 0)
     sample = generate_response(sample_x, sigma)
@@ -169,7 +169,8 @@ safe_N_max = 15
 N_grid = np.arange(1, safe_N_max + 1)
 
 # Plot of optimal bandwidth vs N for different n
-plt.figure(figsize=(8, 5))
+fig, axes = plt.subplots(1, 2, figsize=(9, 3), tight_layout=True)
+
 for n in n_values:
     h_vals = []
     for N in N_grid:
@@ -177,34 +178,35 @@ for n in n_values:
             h_vals.append(float(solve_h(alpha, beta, n, N, sigma)))
         except ValueError:
             h_vals.append(np.nan)
-    plt.plot(N_grid, h_vals, label=f"n = {n}")
+    axes[0].plot(N_grid, h_vals, label=f"n = {n}")
 
-plt.xlabel("N (number of blocks/bins)")
-plt.yscale("log")
-plt.ylabel("$h_{AMISE}$ (log scale)")
-plt.title("Optimal bandwidth vs N for different n")
-plt.legend(title="Sample size")
-plt.grid(True, which='both', alpha=0.3)
-plt.tight_layout()
-plt.savefig("optimal_bandwidth.png", dpi=600)
+axes[0].set_xlabel("N (number of blocks/bins)")
+axes[0].set_ylabel(r"$h_{\mathrm{AMISE}}$ (log scale)")
+axes[0].set_yscale("log")
+axes[0].set_title("Optimal bandwidth vs N")
+axes[0].grid(True, which="both", alpha=0.3)
 
-
-# plot of Mallow's Cp vs N for different n
-plt.figure(figsize=(8, 5))
 for n in n_values:
     x_n = generate_beta_sample(alpha, beta, n)
     x_n, y_n = generate_response(x_n, sigma)
     cp_vals, N_max = mallow_cp_for_dataset(x_n, y_n, N_grid)
-    plt.plot(N_grid, cp_vals, label=f"n = {n}")
+    axes[1].plot(N_grid, cp_vals, label=f"n = {n}")
 
-plt.xlabel('N (number of bins)')
-plt.yscale('log')
-plt.ylabel("Mallow's $C_p$ (log scale)")
-plt.title("Mallow's $C_p$ vs N for different n")
-plt.legend(title='Sample size')
-plt.grid(True, alpha=0.3)
-plt.tight_layout()
-plt.savefig("mallows_cp.png", dpi=600)
+axes[1].set_xlabel("N (number of bins)")
+axes[1].set_ylabel(r"Mallows $C_p$ (log scale)")
+axes[1].set_yscale("log")
+axes[1].set_title("Mallows $C_p$ vs N")
+axes[1].grid(True, which="both", alpha=0.3)
+
+# shared legend (avoids duplicate legends)
+handles, labels = axes[0].get_legend_handles_labels()
+fig.legend(handles, labels, title="Sample size", loc="lower center",
+           ncol=len(n_values), frameon=False, bbox_to_anchor=(0.5, -0.1))
+
+fig.savefig("bandwidth_vs_cp_side_by_side.png", dpi=600, bbox_inches="tight")
+plt.close(fig)
+
+
 
 
 
@@ -213,7 +215,7 @@ N_list       = [1, 2, 5]
 grid_npts    = 1000
 scatter_pts  = 5000
 
-fig, axes = plt.subplots(1, 2, figsize=(12, 5), sharey=True)
+fig, axes = plt.subplots(1, 2, figsize=(9, 3), sharey=True)
 
 for ax, n_sample in zip(axes, [1000, 10000000]):   # two sample sizes
     x_sample = generate_beta_sample(alpha, beta, n_sample)
@@ -251,11 +253,10 @@ for ax, n_sample in zip(axes, [1000, 10000000]):   # two sample sizes
     ax.grid(alpha=0.3)
 
 handles, labels = axes[0].get_legend_handles_labels()
-fig.legend(handles, labels, loc="upper center", ncol=5, frameon=True)
+fig.legend(handles, labels, loc="lower center", ncol=5, frameon=False, bbox_to_anchor=(0.5, -0.045))
 
 fig.tight_layout(rect=[0, 0, 1, 0.95])
 plt.savefig("density.png", dpi=600)
-
 
 
 
@@ -272,7 +273,7 @@ for i, a in enumerate(alpha_grid):
     for j, b in enumerate(beta_grid):
         H[i, j] = solve_h(a, b, n=n_fixed, N=N_fixed, sigma=sigma_fixed)
 
-plt.figure(figsize=(7, 6))
+plt.figure(figsize=(5, 4))
 im = plt.imshow(
     H, origin='lower', aspect='auto',
     extent=[beta_grid.min(), beta_grid.max(), alpha_grid.min(), alpha_grid.max()]
@@ -330,7 +331,7 @@ for N_ in N_grid:
     theta_hats.append(theta_hat)
     sigma_hats.append(sigma_hat)
 
-fig, axes = plt.subplots(1, 2, figsize=(12, 5), sharex=True)
+fig, axes = plt.subplots(1, 2, figsize=(9, 3), sharex=True)
 
 axes[0].plot(N_grid, sigma_hats, marker='o')
 axes[0].set_title(r'$\hat{\sigma}$ vs $N$')
@@ -342,10 +343,14 @@ axes[0].set_ylim(0, 1)
 axes[1].plot(N_grid, theta_hats, marker='s', linestyle='--')
 axes[1].set_title(r'$\hat{\theta}_{22}$ vs $N$')
 axes[1].set_xlabel('N (number of bins)')
-axes[1].set_ylabel(r'$\hat{\theta}_{22} = \mathbb{E}[\hat m^{\prime\prime}(X)^2]$')
+axes[1].set_ylabel(r'$\hat{\theta}_{22}$')
 axes[1].grid(True, alpha=0.3)
 axes[1].set_ylim(0, 40000)
 
 plt.tight_layout()
 plt.savefig("sigma_theta_vs_N_side_by_side.png", dpi=600)
 plt.show()
+
+
+
+# type: ignore

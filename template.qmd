@@ -124,21 +124,30 @@ $$\text{RSS}(N) =  \sum_{i=1}^n \sum_{j=1}^N \lbrace Y_i - \hat{m}_j(X_i) \rbrac
 
 and $N_{\max}= \max \lbrace \min (\lfloor n / 20\rfloor, 5 ), 1\rbrace$; see [Ruppert et al. (1995)](https://sites.stat.washington.edu/courses/stat527/s13/readings/Ruppert_etal_JASA_1995.pdf) for choosing the optimal block size.
 
-## Question 1
+\newpage
 
-Looking at the figure below, we can see that as $N$ increases, the optimal bandwidth decreases. Intuitively, with very few blocks the quartic fits are forced to cover large ranges of $x$, which leads to an underestimation of $\hat \theta_{22}$, pushing $\hat h$ upwards. As $N$ increases, the fitted model tracks better the local curvature, leading to higher $\hat\theta_{22}$ and lower $\hat \sigma^2$, which translate to lower $\hat h$.
+## Results
 
-![XXX](optimal_bandwidth.png){width="400"}
+Looking at @fig-bandwidth, we can see that as $N$ increases, $h_{AMISE}$ decreases.
 
-The figure below shows optimal values for $N$, estimated using Mallow's $C_p$. The plot shows that, as $n$ grows, larger values of $N$ are optimal. This happens because having more data means we can choose narrower buckets that still have many points.
+![XXX](bandwidth_vs_cp_side_by_side.png){#fig-bandwidth width=500}
 
-Additionally plot 1 shows that with higher $n$ smaller bandwidths are preferred.
+Intuitively, with very few blocks the quartic fits are forced to cover large ranges of $x$, which leads to an underestimation of $\hat \theta_{22}$, pushing $\hat h$ upwards. As $N$ increases, the fitted model tracks better the local curvature, leading to higher $\hat\theta_{22}$ and lower $\hat \sigma^2$, which translate to lower $\hat h$. This trend is captured by @fig-theta_sigma, that shows that our estimate $\hat\sigma$ is independent of $N$, while $\hat\theta_{22}$ drops when $N$ increases.
 
-![XXX](mallows_cp.png){width="400"}
+![XXX](sigma_theta_vs_N_side_by_side.png){#fig-theta_sigma width=500}
 
-Figure 3 shows the result explained above. When $n=10,000$, using $N=5$ produces a wiggly result due to the high variance caused by having few points in each bucket. But when $n=1,000,000$, this effect is mitigated by having many points, and using $N=10$ produces much better results.
+@fig-bandwidth also shows that, all else being equal, larger sample sizes $n$ lead to a lower $h_{AMISE}$. Looking at the right panel, it seems that the optimal value number of bins $N$ might depend on $n$. To analyze this further, we plot the optimal value of $N$, defined as the $argmin$ of $C_p$, vs $n$ (@fig-N_vs_n). The figure shows that the optimal $N$ increases logarithmically as $n$ grows.
 
-![XXX](density.png){width="600"}
+Intuitively, as we get more data we can choose narrower buckets that still contain plenty of points and allow to obtain a better fit for the model.
+
+![XXX](optimal_N_vs_n.png){#fig-N_vs_n width=350}
+
+
+
+
+@fig-density is a good way to visualize the result explained above. In this case, we fit the quartic models using different $N$ and $n$. When $n=1,000$, using $N=5$ produces a wiggly result due to having few points in each bucket. But when $n=1,000,000$, this effect is mitigated by the number of points in each bucket, and the fit with $N=5$ is less wiggly.
+
+![XXX](density.png){#fig-density width=500}
 
 ## Question 3
 
