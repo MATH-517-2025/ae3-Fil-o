@@ -149,8 +149,12 @@ Intuitively, as we get more data we can choose narrower buckets that still conta
 
 ![XXX](density.png){#fig-density width=500}
 
-## Question 3
 
-![XXX](h_amise_heatmap_n10000_N2.png){width="300"}
+Regarding the relation between $N$ and the shape of the beta distribution, @fig-heatmap shows that when $\alpha$ is high and $\beta$ is low $h_{AMISE}$ is higher, while when $\alpha$ is low and $\beta$ is high $h_{AMISE}$ is lower.
 
-### Add a plot of m''(x)
+Since $h_{AMISE}$ represents the global bandwidth, it tends to be higher than ideal in regions with lots of data, and lower than ideal in regions with few datapoints. Looking at the formula for $\theta_{22}$, $\hat m''(x)$ is weighted by $f_{X}(x)$, meaning that regions with higher density are assigned an higher weight. Since $|m''(x)|$ is largest near $0$ and smallest near $1$:
+
+- when the density of the distribution is higher around $0$ (small $\alpha$), $\hat \theta_{22}$ increases and thus $\hat h_{AMISE}$ decreases.
+- when the density is higher around $1$ (small $\beta$), $\hat \theta_{22}$ decreases and $\hat h_{AMISE}$ increases.
+
+![XXX](h_amise_heatmap_n10000_N2.png){#fig-heatmap width="300"}
