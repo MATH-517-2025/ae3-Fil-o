@@ -128,33 +128,37 @@ and $N_{\max}= \max \lbrace \min (\lfloor n / 20\rfloor, 5 ), 1\rbrace$; see [Ru
 
 ## Results
 
+@fig-scatter gives an idea of the distribution of the data. $\sigma^2=0.5$ was chosen and kept fixed during the whole report.
+
+![Scatter of the true $m(x)$ (left) versus noisy observations $m(x)+\varepsilon$ (right) for $n=1,000$ draws from $\operatorname{Beta}(2,5)$, with $\sigma^2=0.5$.](scatter_plots.png){#fig-scatter width="500"}
+
 Looking at @fig-bandwidth, we can see that as $N$ increases, $h_{AMISE}$ decreases.
 
-![XXX](bandwidth_vs_cp_side_by_side.png){#fig-bandwidth width=500}
+![(Left) AMISE-bandwidth shrinks with more bins $N$; (right) Mallows $C_p$ rises, both shown for $n\in\{1,000,\,10,000\,100,000\}$, $\alpha=2$, $\beta=5$ (mean across $100$ simulations).](bandwidth_vs_cp_side_by_side.png){#fig-bandwidth width="500"}
 
-Intuitively, with very few blocks the quartic fits are forced to cover large ranges of $x$, which leads to an underestimation of $\hat \theta_{22}$, pushing $\hat h$ upwards. As $N$ increases, the fitted model tracks better the local curvature, leading to higher $\hat\theta_{22}$ and lower $\hat \sigma^2$, which translate to lower $\hat h$. This trend is captured by @fig-theta_sigma, that shows that our estimate $\hat\sigma$ is independent of $N$, while $\hat\theta_{22}$ drops when $N$ increases.
+Intuitively, with very few blocks, quartic fits cover wide ranges and underestimate curvature, so $\hat \theta_{22}$ is too small and $\hat h_{AMISE}$ is large. Increasing $N$ lets the fit track the curvature better, and $\hat \theta_{22}$ increases towards its target, leading to a drop in $\hat h_{AMISE}$.
 
-![XXX](sigma_theta_vs_N_side_by_side.png){#fig-theta_sigma width=500}
+with very few blocks the quartic fits are forced to cover large ranges of $x$, which leads to an underestimation of $\hat \theta_{22}$, pushing $\hat h$ upwards. As $N$ increases, the fitted model tracks better the local curvature, leading to higher $\hat\theta_{22}$ and lower $\hat \sigma^2$, which translate to lower $\hat h$.
+
+This trend is captured by @fig-theta_sigma, that shows that our estimate $\hat\sigma$ is independent of $N$, while $\hat\theta_{22}$ increases when $N$ increases.
+
+![Mean of $100$ runs, with $n=1,000$, $\alpha=2$, $\beta=5$, $\sigma^2=0.5$.](sigma_theta_vs_N_side_by_side.png){#fig-theta_sigma width="500"}
 
 @fig-bandwidth also shows that, all else being equal, larger sample sizes $n$ lead to a lower $h_{AMISE}$. Looking at the right panel, it seems that the optimal value number of bins $N$ might depend on $n$. To analyze this further, we plot the optimal value of $N$, defined as the $argmin$ of $C_p$, vs $n$ (@fig-N_vs_n). The figure shows that the optimal $N$ increases logarithmically as $n$ grows.
 
 Intuitively, as we get more data we can choose narrower buckets that still contain plenty of points and allow to obtain a better fit for the model.
 
-![XXX](optimal_N_vs_n.png){#fig-N_vs_n width=350}
-
-
-
+![Optimal bin count chosen by Mallows $C_p$, for $\alpha=2$, $\beta=5$, averaged across $10$ repetitions.](optimal_N_vs_n.png){#fig-N_vs_n width="350"}
 
 @fig-density is a good way to visualize the result explained above. In this case, we fit the quartic models using different $N$ and $n$. When $n=1,000$, using $N=5$ produces a wiggly result due to having few points in each bucket. But when $n=1,000,000$, this effect is mitigated by the number of points in each bucket, and the fit with $N=5$ is less wiggly.
 
-![XXX](density.png){#fig-density width=500}
-
+![Piece-wise quartic fits compared to the true curve for $n=1,000$ (left) and $n=10,000,000$ (right); larger samples tighten the fit.](density.png){#fig-density width="500"}
 
 Regarding the relation between $N$ and the shape of the beta distribution, @fig-heatmap shows that when $\alpha$ is high and $\beta$ is low $h_{AMISE}$ is higher, while when $\alpha$ is low and $\beta$ is high $h_{AMISE}$ is lower.
 
 Since $h_{AMISE}$ represents the global bandwidth, it tends to be higher than ideal in regions with lots of data, and lower than ideal in regions with few datapoints. Looking at the formula for $\theta_{22}$, $\hat m''(x)$ is weighted by $f_{X}(x)$, meaning that regions with higher density are assigned an higher weight. Since $|m''(x)|$ is largest near $0$ and smallest near $1$:
 
-- when the density of the distribution is higher around $0$ (small $\alpha$), $\hat \theta_{22}$ increases and thus $\hat h_{AMISE}$ decreases.
-- when the density is higher around $1$ (small $\beta$), $\hat \theta_{22}$ decreases and $\hat h_{AMISE}$ increases.
+-   when the density of the distribution is higher around $0$ (small $\alpha$), $\hat \theta_{22}$ increases and thus $\hat h_{AMISE}$ decreases.
+-   when the density is higher around $1$ (small $\beta$), $\hat \theta_{22}$ decreases and $\hat h_{AMISE}$ increases.
 
-![XXX](h_amise_heatmap_n10000_N2.png){#fig-heatmap width="300"}
+![Heatmap of $h_{AMISE}$ across $(\alpha,\beta)$ for $n=10,000$ and $N=2$.](h_amise_heatmap_n10000_N2.png){#fig-heatmap width="300"}
